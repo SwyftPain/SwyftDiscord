@@ -56,6 +56,9 @@ getLastMentionedChannel
 createRole
 editRole
 deleteRole
+createChannel
+editChannel
+deleteChannel
 ```
 
 Embeds and attachments are supported, but there is no embed builder integrated into the library yet.

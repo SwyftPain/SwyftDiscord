@@ -738,6 +738,42 @@ async deleteRole(roleID) {
     console.error(err);
   }
 }
+
+// create channel
+async createChannel(data) {
+  try {
+    let url = `${this.baseURL}/guilds/${this.currentGuildID}/channels`;
+    let headers = { Authorization: `Bot ${this.token}` };
+    const channel = await axios.post(url, data, { headers });
+    return channel.data;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// edit channel
+async editChannel(channelID, data) {
+  try {
+    let url = `${this.baseURL}/channels/${channelID}`;
+    let headers = { Authorization: `Bot ${this.token}` };
+    const channel = await axios.patch(url, data, { headers });
+    return channel.data;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// delete channel
+async deleteChannel(channelID) {
+  try {
+    let url = `${this.baseURL}/channels/${channelID}`;
+    let headers = { Authorization: `Bot ${this.token}` };
+    const channel = await axios.delete(url, { headers });
+    return channel.data;
+  } catch (err) {
+    console.error(err);
+  }
+}
   
 }
 
