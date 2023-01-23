@@ -58,4 +58,4 @@ editRole
 deleteRole
 ```
 
-Embeds and attachments are supported
+Embeds and attachments are supported, but there is no embed builder integrated into the library yet.
