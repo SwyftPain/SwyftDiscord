@@ -1,7 +1,7 @@
 # SwyftDiscord
  Discord Bot Library in Javascript
 
-Still in development
+Still in development (but basic commands work)
 
 Currently added methods are:
 
