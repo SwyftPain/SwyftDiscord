@@ -1,6 +1,6 @@
 {
   "name": "swyftdiscord",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "New discord bot library in Javascript",
   "main": "index.js",
   "scripts": {
@@ -10,6 +10,10 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/SwyftPain/SwyftDiscord.git"
+  },
+  "funding": {
+    "type": "paypal",
+    "url": "https://paypal.me/mrjohnnyjo"
   },
   "keywords": [],
   "author": "SwyftPain",
