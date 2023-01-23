@@ -70,4 +70,5 @@ Plans:
 + Add typescript typings
 
 Discord:
-[discord](https://discord.gg/rZHnGsYkmu)
+
+[join here](https://discord.gg/rZHnGsYkmu)
