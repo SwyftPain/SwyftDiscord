@@ -66,6 +66,11 @@ getChannelInvites
 createChannelInvite
 deleteChannelPermission
 getChannelWebhooks
+kickMember
+banMember
+unbanMember
+addRoleToMember
+removeRoleFromMember
 ```
 
 Embeds and attachments are supported.

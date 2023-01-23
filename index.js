@@ -876,11 +876,69 @@ class SwyftDiscord {
       console.error(err);
     }
   }
+
+  // kick member
+  async kickMember(memberID) {
+    try {
+      let url = `${this.baseURL}/guilds/${this.currentGuildID}/members/${memberID}`;
+      let headers = { Authorization: `Bot ${this.token}` };
+      const member = await axios.delete(url, { headers });
+      return member.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // ban member
+  async banMember(memberID, data) {
+    try {
+      let url = `${this.baseURL}/guilds/${this.currentGuildID}/bans/${memberID}`;
+      let headers = { Authorization: `Bot ${this.token}` };
+      const member = await axios.put(url, data, { headers });
+      return member.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // unban member
+  async unbanMember(memberID) {
+    try {
+      let url = `${this.baseURL}/guilds/${this.currentGuildID}/bans/${memberID}`;
+      let headers = { Authorization: `Bot ${this.token}` };
+      const member = await axios.delete(url, { headers });
+      return member.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // add role to member
+  async addRoleToMember(memberID, roleID) {
+    try {
+      let url = `${this.baseURL}/guilds/${this.currentGuildID}/members/${memberID}/roles/${roleID}`;
+      let headers = { Authorization: `Bot ${this.token}` };
+      const member = await axios.put(url, {}, { headers });
+      return member.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // remove role from member
+  async removeRoleFromMember(memberID, roleID) {
+    try {
+      let url = `${this.baseURL}/guilds/${this.currentGuildID}/members/${memberID}/roles/${roleID}`;
+      let headers = { Authorization: `Bot ${this.token}` };
+      const member = await axios.delete(url, { headers });
+      return member.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
 }
-
-
 
 module.exports = {
   SwyftDiscord,
-  EmbedBuilder
+  EmbedBuilder,
 };
