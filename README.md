@@ -57,3 +57,5 @@ createRole
 editRole
 deleteRole
 ```
+
+Embeds and attachments are supported
