@@ -68,3 +68,6 @@ Plans:
 + Split methods into separate files for better readability
 + Cover the rest of Discord API
 + Add typescript typings
+
+Discord:
+(discord)[https://discord.gg/rZHnGsYkmu]
