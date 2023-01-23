@@ -59,9 +59,16 @@ deleteRole
 createChannel
 editChannel
 deleteChannel
+setChannelPermissions
+getChannelPermissions
+setChannelPosition
+getChannelInvites
+createChannelInvite
+deleteChannelPermission
+getChannelWebhooks
 ```
 
-Embeds and attachments are supported, but there is no embed builder integrated into the library yet.
+Embeds and attachments are supported.
 
 Plans:
 
