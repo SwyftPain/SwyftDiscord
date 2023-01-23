@@ -38,6 +38,7 @@ class SwyftDiscord {
       `wss://gateway.discord.gg/?v=6&encoding=json&intents=${this.intents},${this.partials}`
     );
 
+    // on start
     this.ws.onopen = () => {
       const data = {
         op: 2,
@@ -64,6 +65,7 @@ class SwyftDiscord {
       }
     };
 
+    // on message
     this.ws.onmessage = (event) => {
       const message = JSON.parse(event.data);
       if (message.op === 0 && message.t === "MESSAGE_CREATE") {
@@ -76,15 +78,18 @@ class SwyftDiscord {
       }
     };
 
+    // on close
     this.ws.onclose = () => {
       clearInterval(this.heartbeatInterval);
     };
 
+    // on error
     this.ws.onerror = (error) => {
       console.log(`WebSocket error: ${error}`);
     };
   }
 
+  // start the heartbeat
   startHeartbeat(interval) {
     this.heartbeatInterval = setInterval(() => {
       this.ws.send(JSON.stringify({ op: 1, d: null }));
@@ -197,6 +202,7 @@ class SwyftDiscord {
     }
   }
 
+  // Get a user's avatar
   displayAvatarURL(user) {
     if (user.id && user.avatar) {
       return `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
@@ -205,6 +211,7 @@ class SwyftDiscord {
     }
   }
 
+  // Collect messages
   async collectMessages(filter, max, time, callback, errorCallback) {
     if (this.collectionActive) {
       errorCallback("A collection is already active.");
@@ -251,6 +258,7 @@ class SwyftDiscord {
     }
   }
 
+  // Delete a message
   async deleteMessages(channelID, amount) {
     if (!channelID) {
       throw new Error("channelID is required");
@@ -640,141 +648,148 @@ class SwyftDiscord {
     }
   }
 
+  // get role
   async getRole(roleID) {
     try {
-        const headers = { Authorization: `Bot ${this.token}` };
-        const { data } = await axios.get(`${this.baseURL}/guilds/${this.currentGuildID}/roles`, { headers });
-        const role = data.find((r) => r.id === roleID);
-        return role;
+      const headers = { Authorization: `Bot ${this.token}` };
+      const { data } = await axios.get(
+        `${this.baseURL}/guilds/${this.currentGuildID}/roles`,
+        { headers }
+      );
+      const role = data.find((r) => r.id === roleID);
+      return role;
     } catch (err) {
-        console.error(err);
+      console.error(err);
     }
-}
-
-async getMentionedRoles(message) {
-  const roles = message.mention_roles;
-  const show = [];
-  for (let i = 0; i < roles.length; i++) {
-    const role = await this.getRole(roles[i]);
-    show.push(role);
   }
-  return show;
-}
 
-// get first mentioned role
-async getFirstMentionedRole(message) {
-  const roles = message.mention_roles;
-  const role = await this.getRole(roles[0]);
-  return role;
-}
-
-// get last mentioned role
-async getLastMentionedRole(message) {
-  const roles = message.mention_roles;
-  const role = await this.getRole(roles[roles.length - 1]);
-  return role;
-}
-
-async getMentionedChannels(message) {
-  const channelIDs = message.content.match(/<#(\d+)>/g);
-  if (!channelIDs) return [];
-  const channels = await Promise.all(channelIDs.map(async (channelID) => {
-    const id = channelID.match(/\d+/)[0];
-    return await this.getChannel(id);
-  }));
-  return channels;
-}
-
-// get first mentioned channel
-async getFirstMentionedChannel(message) {
-  const channelIDs = message.content.match(/<#(\d+)>/g);
-  if (!channelIDs) return [];
-  const id = channelIDs[0].match(/\d+/)[0];
-  const channel = await this.getChannel(id);
-  return channel;
-}
-
-// get last mentioned channel
-async getLastMentionedChannel(message) {
-  const channelIDs = message.content.match(/<#(\d+)>/g);
-  if (!channelIDs) return [];
-  const id = channelIDs[channelIDs.length - 1].match(/\d+/)[0];
-  const channel = await this.getChannel(id);
-  return channel;
-}
-
-// create role
-async createRole(data) {
-  try {
-    let url = `${this.baseURL}/guilds/${this.currentGuildID}/roles`;
-    let headers = { Authorization: `Bot ${this.token}` };
-    const role = await axios.post(url, data, { headers });
-    return role.data;
-  } catch (err) {
-    console.error(err);
+  // get mentioned roles
+  async getMentionedRoles(message) {
+    const roles = message.mention_roles;
+    const show = [];
+    for (let i = 0; i < roles.length; i++) {
+      const role = await this.getRole(roles[i]);
+      show.push(role);
+    }
+    return show;
   }
-}
 
-// edit role
-async editRole(roleID, data) {
-  try {
-    let url = `${this.baseURL}/guilds/${this.currentGuildID}/roles/${roleID}`;
-    let headers = { Authorization: `Bot ${this.token}` };
-    const role = await axios.patch(url, data, { headers });
-    return role.data;
-  } catch (err) {
-    console.error(err);
+  // get first mentioned role
+  async getFirstMentionedRole(message) {
+    const roles = message.mention_roles;
+    const role = await this.getRole(roles[0]);
+    return role;
   }
-}
 
-// delete role
-async deleteRole(roleID) {
-  try {
-    let url = `${this.baseURL}/guilds/${this.currentGuildID}/roles/${roleID}`;
-    let headers = { Authorization: `Bot ${this.token}` };
-    const role = await axios.delete(url, { headers });
-    return role.data;
-  } catch (err) {
-    console.error(err);
+  // get last mentioned role
+  async getLastMentionedRole(message) {
+    const roles = message.mention_roles;
+    const role = await this.getRole(roles[roles.length - 1]);
+    return role;
   }
-}
 
-// create channel
-async createChannel(data) {
-  try {
-    let url = `${this.baseURL}/guilds/${this.currentGuildID}/channels`;
-    let headers = { Authorization: `Bot ${this.token}` };
-    const channel = await axios.post(url, data, { headers });
-    return channel.data;
-  } catch (err) {
-    console.error(err);
+  // get mentioned channels
+  async getMentionedChannels(message) {
+    const channelIDs = message.content.match(/<#(\d+)>/g);
+    if (!channelIDs) return [];
+    const channels = await Promise.all(
+      channelIDs.map(async (channelID) => {
+        const id = channelID.match(/\d+/)[0];
+        return await this.getChannel(id);
+      })
+    );
+    return channels;
   }
-}
 
-// edit channel
-async editChannel(channelID, data) {
-  try {
-    let url = `${this.baseURL}/channels/${channelID}`;
-    let headers = { Authorization: `Bot ${this.token}` };
-    const channel = await axios.patch(url, data, { headers });
-    return channel.data;
-  } catch (err) {
-    console.error(err);
+  // get first mentioned channel
+  async getFirstMentionedChannel(message) {
+    const channelIDs = message.content.match(/<#(\d+)>/g);
+    if (!channelIDs) return [];
+    const id = channelIDs[0].match(/\d+/)[0];
+    const channel = await this.getChannel(id);
+    return channel;
   }
-}
 
-// delete channel
-async deleteChannel(channelID) {
-  try {
-    let url = `${this.baseURL}/channels/${channelID}`;
-    let headers = { Authorization: `Bot ${this.token}` };
-    const channel = await axios.delete(url, { headers });
-    return channel.data;
-  } catch (err) {
-    console.error(err);
+  // get last mentioned channel
+  async getLastMentionedChannel(message) {
+    const channelIDs = message.content.match(/<#(\d+)>/g);
+    if (!channelIDs) return [];
+    const id = channelIDs[channelIDs.length - 1].match(/\d+/)[0];
+    const channel = await this.getChannel(id);
+    return channel;
   }
-}
-  
+
+  // create role
+  async createRole(data) {
+    try {
+      let url = `${this.baseURL}/guilds/${this.currentGuildID}/roles`;
+      let headers = { Authorization: `Bot ${this.token}` };
+      const role = await axios.post(url, data, { headers });
+      return role.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // edit role
+  async editRole(roleID, data) {
+    try {
+      let url = `${this.baseURL}/guilds/${this.currentGuildID}/roles/${roleID}`;
+      let headers = { Authorization: `Bot ${this.token}` };
+      const role = await axios.patch(url, data, { headers });
+      return role.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // delete role
+  async deleteRole(roleID) {
+    try {
+      let url = `${this.baseURL}/guilds/${this.currentGuildID}/roles/${roleID}`;
+      let headers = { Authorization: `Bot ${this.token}` };
+      const role = await axios.delete(url, { headers });
+      return role.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // create channel
+  async createChannel(data) {
+    try {
+      let url = `${this.baseURL}/guilds/${this.currentGuildID}/channels`;
+      let headers = { Authorization: `Bot ${this.token}` };
+      const channel = await axios.post(url, data, { headers });
+      return channel.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // edit channel
+  async editChannel(channelID, data) {
+    try {
+      let url = `${this.baseURL}/channels/${channelID}`;
+      let headers = { Authorization: `Bot ${this.token}` };
+      const channel = await axios.patch(url, data, { headers });
+      return channel.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // delete channel
+  async deleteChannel(channelID) {
+    try {
+      let url = `${this.baseURL}/channels/${channelID}`;
+      let headers = { Authorization: `Bot ${this.token}` };
+      const channel = await axios.delete(url, { headers });
+      return channel.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
 }
 
 module.exports = {
