@@ -1,5 +1,5 @@
 {
-  "name": "dlib",
+  "name": "swyftdiscord",
   "version": "1.0.0",
   "description": "New discord bot library in Javascript",
   "main": "index.js",
