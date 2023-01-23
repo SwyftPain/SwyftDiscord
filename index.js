@@ -2,6 +2,7 @@ const WebSocket = require("ws");
 const axios = require("axios");
 var FormData = require("form-data");
 const fs = require("fs");
+const { EmbedBuilder } = require("./methods/builders/embedbuilder.js");
 
 class SwyftDiscord {
   // set intents and partials
@@ -362,9 +363,9 @@ class SwyftDiscord {
   }
 
   // get a member
-  async getMember(guildID, userID) {
+  async getMember(userID) {
     try {
-      let url = `${this.baseURL}/guilds/${guildID}/members/${userID}`;
+      let url = `${this.baseURL}/guilds/${this.currentGuildID}/members/${userID}`;
       let headers = { Authorization: `Bot ${this.token}` };
       const member = await axios.get(url, { headers });
       return member.data;
@@ -790,8 +791,96 @@ class SwyftDiscord {
       console.error(err);
     }
   }
+
+  // set channel permissions
+  async setChannelPermissions(channelID, data) {
+    try {
+      let url = `${this.baseURL}/channels/${channelID}/permissions`;
+      let headers = { Authorization: `Bot ${this.token}` };
+      const permissions = await axios.put(url, data, { headers });
+      return permissions.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // get channel permissions
+  async getChannelPermissions(channelID) {
+    try {
+      let url = `${this.baseURL}/channels/${channelID}/permissions`;
+      let headers = { Authorization: `Bot ${this.token}` };
+      const permissions = await axios.get(url, { headers });
+      return permissions.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // set channel position
+  async setChannelPosition(channelID, position) {
+    try {
+      let url = `${this.baseURL}/guilds/${this.currentGuildID}/channels`;
+      let headers = { Authorization: `Bot ${this.token}` };
+      const data = { id: channelID, position };
+      const channel = await axios.patch(url, data, { headers });
+      return channel.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // get channel invites
+  async getChannelInvites(channelID) {
+    try {
+      let url = `${this.baseURL}/channels/${channelID}/invites`;
+      let headers = { Authorization: `Bot ${this.token}` };
+      const invites = await axios.get(url, { headers });
+      return invites.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // create channel invite
+  async createChannelInvite(channelID, data) {
+    try {
+      let url = `${this.baseURL}/channels/${channelID}/invites`;
+      let headers = { Authorization: `Bot ${this.token}` };
+      const invite = await axios.post(url, data, { headers });
+      return invite.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // delete channel permission
+  async deleteChannelPermission(channelID, overwriteID) {
+    try {
+      let url = `${this.baseURL}/channels/${channelID}/permissions/${overwriteID}`;
+      let headers = { Authorization: `Bot ${this.token}` };
+      const permission = await axios.delete(url, { headers });
+      return permission.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // get channel webhooks
+  async getChannelWebhooks(channelID) {
+    try {
+      let url = `${this.baseURL}/channels/${channelID}/webhooks`;
+      let headers = { Authorization: `Bot ${this.token}` };
+      const webhooks = await axios.get(url, { headers });
+      return webhooks.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
 }
+
+
 
 module.exports = {
   SwyftDiscord,
+  EmbedBuilder
 };
