@@ -1,0 +1,22 @@
+{
+  "name": "dlib",
+  "version": "1.0.0",
+  "description": "New discord bot library in Javascript",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.2.3",
+    "dotenv": "^16.0.3",
+    "form-data": "^4.0.0",
+    "node-fetch": "^3.3.0",
+    "nodemon": "^2.0.20",
+    "sp-easyembed": "^1.2.5",
+    "ws": "^8.12.0"
+  }
+}
