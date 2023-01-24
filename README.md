@@ -141,6 +141,9 @@ TextInputBuilder,
 ModalBuilder
 onEditedMessage
 onDeletedMessage
+deleteDM
+refreshApplicationCommands
+refreshGlobalApplicationCommands
 ```
 
 Embeds and attachments are supported.

@@ -1865,6 +1865,42 @@ class SwyftDiscord {
       console.error(err);
     }
   }
+
+  // Delete DM
+  async deleteDM(channelID) {
+    try {
+      let url = `${this.baseURL}/channels/${channelID}`;
+      let headers = { Authorization: `Bot ${this.token}` };
+      const dm = await axios.delete(url, { headers });
+      return dm.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // Refresh Application Commands
+  async refreshApplicationCommands(guildID) {
+    try {
+      let url = `${this.baseURL}/applications/${this.clientID}/guilds/${guildID}/commands`;
+      let headers = { Authorization: `Bot ${this.token}` };
+      const commands = await axios.get(url, { headers });
+      return commands.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // Refresh Global Application Commands
+  async refreshGlobalApplicationCommands() {
+    try {
+      let url = `${this.baseURL}/applications/${this.clientID}/commands`;
+      let headers = { Authorization: `Bot ${this.token}` };
+      const commands = await axios.get(url, { headers });
+      return commands.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
 }
 
 // Create Modal Builder (component) (custom_id, title, addComponent, showModal)
