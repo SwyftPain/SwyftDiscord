@@ -1123,11 +1123,17 @@ class SwyftDiscord {
   // send a message to a user via DM (requires user ID and message content)
   async sendDM(userID, content) {
     try {
+      let user = await this.getUser(userID);
+      let mention = `[object Object]`;
+      let contents = content;
+      if(content.includes(mention)) {
+        contents = content.replace(mention, `<@${user.id}>`);
+      }
       let url = `${this.baseURL}/users/@me/channels`;
       let headers = { Authorization: `Bot ${this.token}` };
       const data = { recipient_id: userID };
       const channel = await axios.post(url, data, { headers });
-      const message = await this.sendMessage(channel.data.id, content);
+      const message = await this.sendMessage(channel.data.id, contents);
       return message;
     } catch (err) {
       console.error(err);
