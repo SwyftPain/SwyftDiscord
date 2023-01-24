@@ -141,7 +141,6 @@ TextInputBuilder,
 ModalBuilder
 onEditedMessage
 onDeletedMessage
-deleteDM
 refreshApplicationCommands
 refreshGlobalApplicationCommands
 ```

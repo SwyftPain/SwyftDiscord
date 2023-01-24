@@ -1872,18 +1872,6 @@ class SwyftDiscord {
     }
   }
 
-  // Delete DM
-  async deleteDM(channelID) {
-    try {
-      let url = `${this.baseURL}/channels/${channelID}`;
-      let headers = { Authorization: `Bot ${this.token}` };
-      const dm = await axios.delete(url, { headers });
-      return dm.data;
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
   // Refresh Application Commands
   async refreshApplicationCommands(guildID) {
     try {
