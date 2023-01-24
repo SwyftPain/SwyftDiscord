@@ -139,6 +139,8 @@ SelectMenuBuilder,
 ActionRowBuilder
 TextInputBuilder,
 ModalBuilder
+onEditedMessage
+onDeletedMessage
 ```
 
 Embeds and attachments are supported.

@@ -156,6 +156,120 @@ class SwyftDiscord {
     this.onReadyCallback = callback;
   }
 
+  // on edited message
+  async onEditedMessage(callback) {
+    this.ws = new WebSocket(
+      `wss://gateway.discord.gg/?v=6&encoding=json&intents=${this.intents},${this.partials}`
+    );
+
+    // on start
+    this.ws.onopen = () => {
+      const data = {
+        op: 2,
+        d: {
+          token: this.token,
+          properties: {
+            $os: "windows",
+            $browser: "my_library",
+            $device: "my_library",
+          },
+          presence: {
+            status: "online",
+            since: null,
+            game: {
+              name: "my_library",
+            },
+          },
+        },
+      };
+      this.ws.send(JSON.stringify(data));
+
+      if (this.onReadyCallback) {
+        this.onReadyCallback();
+      }
+    };
+
+    // on message
+    this.ws.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      if (message.op === 0 && message.t === "MESSAGE_UPDATE") {
+        message.d.channel_id = message.d.channel_id;
+        this.currentChannelID = message.d.channel_id;
+        this.currentGuildID = message.d.guild_id;
+        callback(message.d);
+      } else if (message.op === 10) {
+        this.startHeartbeat(message.d.heartbeat_interval);
+      }
+    };
+
+    // on close
+    this.ws.onclose = () => {
+      clearInterval(this.heartbeatInterval);
+    };
+
+    // on error
+    this.ws.onerror = (error) => {
+      console.log(`WebSocket error: ${error}`);
+    };
+  }
+
+  // on deleted message
+  async onDeletedMessage(callback) {
+    this.ws = new WebSocket(
+      `wss://gateway.discord.gg/?v=6&encoding=json&intents=${this.intents},${this.partials}`
+    );
+
+    // on start
+    this.ws.onopen = () => {
+      const data = {
+        op: 2,
+        d: {
+          token: this.token,
+          properties: {
+            $os: "windows",
+            $browser: "my_library",
+            $device: "my_library",
+          },
+          presence: {
+            status: "online",
+            since: null,
+            game: {
+              name: "my_library",
+            },
+          },
+        },
+      };
+      this.ws.send(JSON.stringify(data));
+
+      if (this.onReadyCallback) {
+        this.onReadyCallback();
+      }
+    };
+
+    // on message
+    this.ws.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      if (message.op === 0 && message.t === "MESSAGE_DELETE") {
+        message.d.channel_id = message.d.channel_id;
+        this.currentChannelID = message.d.channel_id;
+        this.currentGuildID = message.d.guild_id;
+        callback(message.d);
+      } else if (message.op === 10) {
+        this.startHeartbeat(message.d.heartbeat_interval);
+      }
+    };
+
+    // on close
+    this.ws.onclose = () => {
+      clearInterval(this.heartbeatInterval);
+    };
+
+    // on error
+    this.ws.onerror = (error) => {
+      console.log(`WebSocket error: ${error}`);
+    };
+  }
+
   // Set bot activity
   async setActivity(status, type, activity) {
     let activityType;
@@ -1753,7 +1867,7 @@ class SwyftDiscord {
   }
 }
 
-// Create Modal Builder (component) (custom_id, title, addComponent, showModal) 
+// Create Modal Builder (component) (custom_id, title, addComponent, showModal)
 class ModalBuilder {
   constructor() {
     this.custom_id = null;
@@ -1916,7 +2030,9 @@ class ButtonBuilder {
 
     // Check if style is a predefined style
     if (!["primary", "secondary", "success", "danger"].includes(style)) {
-      throw new TypeError("Style must be a 'primary, secondary, success, danger'.");
+      throw new TypeError(
+        "Style must be a 'primary, secondary, success, danger'."
+      );
     }
 
     // Convert style to number (1 = Primary, 2 = Secondary, 3 = Success, 4 = Danger) (Default: 1) (Switch Case)
@@ -2114,5 +2230,5 @@ module.exports = {
   SelectMenuBuilder,
   ActionRowBuilder,
   TextInputBuilder,
-  ModalBuilder
+  ModalBuilder,
 };
