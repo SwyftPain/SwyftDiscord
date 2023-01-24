@@ -3,6 +3,7 @@ const axios = require("axios");
 var FormData = require("form-data");
 const fs = require("fs");
 const { EmbedBuilder } = require("./methods/builders/embedbuilder.js");
+const { QuickDB } = require("quick.db");
 
 class SwyftDiscord {
   // set intents and partials
@@ -1897,6 +1898,86 @@ class SwyftDiscord {
   }
 }
 
+// Create collection class
+class Collection {
+  constructor() {
+    this.collection = {};
+  }
+
+  // Set
+  set(key, value) {
+    this.collection[key] = value;
+    return this;
+  }
+
+  // Get
+  get(key) {
+    return this.collection[key];
+  }
+
+  // Delete
+  delete(key) {
+    delete this.collection[key];
+    return this;
+  }
+
+  // Has
+  has(key) {
+    return this.collection.hasOwnProperty(key);
+  }
+
+  // Clear
+  clear() {
+    this.collection = {};
+    return this;
+  }
+
+  // Size
+  size() {
+    return Object.keys(this.collection).length;
+  }
+
+  // Array
+  array() {
+    return Object.values(this.collection);
+  }
+
+  // Key Array
+  keyArray() {
+    return Object.keys(this.collection);
+  }
+
+  // First
+  first() {
+    return Object.values(this.collection)[0];
+  }
+
+  // First Key
+  firstKey() {
+    return Object.keys(this.collection)[0];
+  }
+
+  // Last
+  last() {
+    return Object.values(this.collection)[Object.values(this.collection).length - 1];
+  }
+
+  // Last Key
+  lastKey() {
+    return Object.keys(this.collection)[Object.keys(this.collection).length - 1];
+  }
+
+  // Random
+  random() {
+    return Object.values(this.collection)[Math.floor(Math.random() * Object.values(this.collection).length)];
+  }
+
+  // Random Key
+  randomKey() {
+    return Object.keys(this.collection)[Math.floor(Math.random() * Object.keys(this.collection).length)];
+  }
+}
+
 // Create Modal Builder (component) (custom_id, title, addComponent, showModal)
 class ModalBuilder {
   constructor() {
@@ -2253,6 +2334,53 @@ class SelectMenuBuilder {
   }
 }
 
+// Create cooldowns using quick.db
+class Cooldown {
+  constructor() {
+    this.db = new QuickDB();
+  }
+
+  // Set cooldown
+  async setCooldown(command, time) {
+    // Check if command is a string
+    if (typeof command !== "string") {
+      throw new TypeError("Command must be a string.");
+    }
+
+    // Check if time is a number
+    if (typeof time !== "number") {
+      throw new TypeError("Time must be a number.");
+    }
+
+    // Set cooldown
+    await this.db.set(command, time);
+    return await this.db.get(command);
+  }
+
+  // Get cooldown
+  async getCooldown(command) {
+    // Check if command is a string
+    if (typeof command !== "string") {
+      throw new TypeError("Command must be a string.");
+    }
+
+    // Get cooldown
+    return await this.db.get(command);
+  }
+
+  // Delete cooldown
+  async deleteCooldown(command) {
+    // Check if command is a string
+    if (typeof command !== "string") {
+      throw new TypeError("Command must be a string.");
+    }
+
+    // Delete cooldown
+    await this.db.delete(command);
+    return await this.db.get(command);
+  }
+}
+
 module.exports = {
   SwyftDiscord,
   EmbedBuilder,
@@ -2261,4 +2389,6 @@ module.exports = {
   ActionRowBuilder,
   TextInputBuilder,
   ModalBuilder,
+  Collection,
+  Cooldown,
 };
