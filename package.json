@@ -1,6 +1,6 @@
 {
   "name": "swyftdiscord",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "New discord bot library in Javascript",
   "main": "index.js",
   "scripts": {

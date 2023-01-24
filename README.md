@@ -134,6 +134,9 @@ deleteAutoModerationRule
 createGlobalSlashCommands
 createGuildSlashCommands
 EmbedBuilder
+ButtonBuilder,
+SelectMenuBuilder,
+ActionRowBuilder
 ```
 
 Embeds and attachments are supported.

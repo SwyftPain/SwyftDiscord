@@ -1726,7 +1726,242 @@ class SwyftDiscord {
   }
 }
 
+// Create Action Row Builder (component)
+class ActionRowBuilder {
+  constructor() {
+    this.components = [];
+  }
+
+  // Add Button
+  addButton(button) {
+    this.components.push(button);
+    return this;
+  }
+
+  // Build Action Row
+  build() {
+    return {
+      type: 1,
+      components: this.components,
+    };
+  }
+}
+
+// Create Button Builder (component)
+class ButtonBuilder {
+  constructor() {
+    this.style = 1;
+    this.label = null;
+    this.emoji = null;
+    this.custom_id = null;
+    this.url = null;
+    this.disabled = false;
+  }
+
+  // Set Style (1 = Primary, 2 = Secondary, 3 = Success, 4 = Danger) (Default: 1) (Required) (String) (Predefined)
+  setStyle(style) {
+    // Check if style is a string
+    if (typeof style !== "string") {
+      throw new TypeError("Style must be a string.");
+    }
+
+    // Check if style is a predefined style
+    if (!["primary", "secondary", "success", "danger"].includes(style)) {
+      throw new TypeError("Style must be a 'primary, secondary, success, danger'.");
+    }
+
+    // Convert style to number (1 = Primary, 2 = Secondary, 3 = Success, 4 = Danger) (Default: 1) (Switch Case)
+    switch (style) {
+      case "primary":
+        this.style = 1;
+        break;
+      case "secondary":
+        this.style = 2;
+        break;
+      case "success":
+        this.style = 3;
+        break;
+      case "danger":
+        this.style = 4;
+        break;
+    }
+
+    return this.style;
+  }
+
+  // Set Label (Default: null) (Required) (String)
+  setLabel(label) {
+    // Check if label is a string
+    if (typeof label !== "string") {
+      throw new TypeError("Label must be a string.");
+    }
+
+    this.label = label;
+    return this.label;
+  }
+
+  // Set Emoji (Default: null) (Optional) (Valid emoji according to Discord API) (ASCII Emoji, Unicode Emoji, Custom Emoji)
+  setEmoji(emoji) {
+    // Check if emoji is a string
+    if (typeof emoji !== "string") {
+      throw new TypeError("Emoji must be a string.");
+    }
+
+    // Check if emoji is a valid emoji
+    if (!emoji.match(/^(?:[^\u0000-\u007F]|\w)*$/)) {
+      throw new TypeError("Emoji must be a valid emoji.");
+    }
+
+    // Check if emoji is a custom emoji
+    if (emoji.match(/<a?:\w+:\d+>/)) {
+      this.emoji = {
+        name: emoji.match(/<a?:\w+:\d+>/)[0],
+        id: emoji.match(/<a?:\w+:(\d+)>/)[1],
+      };
+    } else {
+      this.emoji = {
+        name: emoji,
+      };
+    }
+
+    return this.emoji;
+  }
+
+  // Set Custom ID (Default: null) (Required) (String)
+  setCustomID(customID) {
+    // Check if customID is a string
+    if (typeof customID !== "string") {
+      throw new TypeError("Custom ID must be a string.");
+    }
+
+    this.custom_id = customID;
+    return this.custom_id;
+  }
+
+  // Set URL (Default: null) (Optional) (String)
+  setURL(url) {
+    // Check if url is a string
+    if (typeof url !== "string") {
+      throw new TypeError("URL must be a string.");
+    }
+
+    this.url = url;
+    return this.url;
+  }
+
+  // Set Disabled (Default: false) (Optional) (Boolean)
+  setDisabled(disabled) {
+    // Check if disabled is a boolean
+    if (typeof disabled !== "boolean") {
+      throw new TypeError("Disabled must be a boolean.");
+    }
+
+    this.disabled = disabled;
+    return this.disabled;
+  }
+
+  // Build Button
+  build() {
+    return {
+      type: 2,
+      style: this.style,
+      label: this.label,
+      emoji: this.emoji,
+      custom_id: this.custom_id,
+      url: this.url,
+      disabled: this.disabled,
+    };
+  }
+}
+
+// Create Select Menu Builder (component)
+class SelectMenuBuilder {
+  constructor() {
+    this.custom_id = null;
+    this.placeholder = null;
+    this.min_values = 1;
+    this.max_values = 1;
+    this.options = [];
+  }
+
+  // Set Custom ID (Default: null) (Required) (String)
+  setCustomID(customID) {
+    // Check if customID is a string
+    if (typeof customID !== "string") {
+      throw new TypeError("Custom ID must be a string.");
+    }
+
+    this.custom_id = customID;
+    return this.custom_id;
+  }
+
+  // Set Placeholder (Default: null) (Optional) (String)
+  setPlaceholder(placeholder) {
+    // Check if placeholder is a string
+    if (typeof placeholder !== "string") {
+      throw new TypeError("Placeholder must be a string.");
+    }
+
+    this.placeholder = placeholder;
+    return this.placeholder;
+  }
+
+  // Set Minimum Values (Default: 1) (Optional) (Number)
+  setMinValues(minValues) {
+    // Check if minValues is a number
+    if (typeof minValues !== "number") {
+      throw new TypeError("Minimum Values must be a number.");
+    }
+
+    this.min_values = minValues;
+    return this.min_values;
+  }
+
+  // Set Maximum Values (Default: 1) (Optional) (Number)
+  setMaxValues(maxValues) {
+    // Check if maxValues is a number
+    if (typeof maxValues !== "number") {
+      throw new TypeError("Maximum Values must be a number.");
+    }
+
+    this.max_values = maxValues;
+    return this.max_values;
+  }
+
+  // Add Option (Default: []) (Required) (Object)
+  addOption(option) {
+    // Check if option is an object
+    if (typeof option !== "object") {
+      throw new TypeError("Option must be an object.");
+    }
+
+    // Check if option is a valid option
+    if (!option.label || !option.value || !option.description) {
+      throw new TypeError("Option must be a valid option.");
+    }
+
+    // Add option to options array
+    this.options.push(option);
+    return this.options;
+  }
+
+  // Build Select Menu
+  build() {
+    return {
+      type: 3,
+      custom_id: this.custom_id,
+      placeholder: this.placeholder,
+      min_values: this.min_values,
+      max_values: this.max_values,
+      options: this.options,
+    };
+  }
+}
+
 module.exports = {
   SwyftDiscord,
   EmbedBuilder,
+  ButtonBuilder,
+  SelectMenuBuilder,
+  ActionRowBuilder
 };
