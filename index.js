@@ -238,6 +238,9 @@ class SwyftDiscord {
             );
           });
         }
+        if (options.components) {
+          data.components = options.components;
+        }
         const send = await axios.post(url, formData, {
           headers: {
             ...headers,
