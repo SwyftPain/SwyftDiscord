@@ -137,6 +137,8 @@ EmbedBuilder
 ButtonBuilder,
 SelectMenuBuilder,
 ActionRowBuilder
+TextInputBuilder,
+ModalBuilder
 ```
 
 Embeds and attachments are supported.

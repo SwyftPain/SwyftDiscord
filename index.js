@@ -1724,6 +1724,152 @@ class SwyftDiscord {
       console.error(err);
     }
   }
+
+  // Create user context menu commands
+  async createUserContextMenuCommands(data) {
+    try {
+      let url = `${this.baseURL}/applications/${this.clientID}/commands`;
+      let headers = { Authorization: `Bot ${this.token}` };
+      const commands = await axios.post(url, data, { headers });
+      return commands.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // Create message context menu commands
+  async createMessageContextMenuCommands(data) {
+    try {
+      let url = `${this.baseURL}/applications/${this.clientID}/commands`;
+      let headers = { Authorization: `Bot ${this.token}` };
+      const commands = await axios.post(url, data, { headers });
+      return commands.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+}
+
+// Create Modal Builder (component) (custom_id, title, addComponent, showModal) 
+class ModalBuilder {
+  constructor() {
+    this.custom_id = null;
+    this.title = null;
+    this.components = [];
+    this.showModal = false;
+  }
+
+  // Set Custom ID
+  setCustomID(custom_id) {
+    this.custom_id = custom_id;
+    return this;
+  }
+
+  // Set Title
+  setTitle(title) {
+    this.title = title;
+    return this;
+  }
+
+  // Add Component
+  addComponent(component) {
+    this.components.push(component);
+    return this;
+  }
+
+  // Show Modal
+  showModal() {
+    this.showModal = true;
+    return this;
+  }
+
+  // Build Modal
+  build() {
+    return {
+      type: 9,
+      custom_id: this.custom_id,
+      title: this.title,
+      components: this.components,
+      showModal: this.showModal,
+    };
+  }
+}
+
+// Create TextInputBuilder (component) (custom_id, label, style, placeholder, min_length, max_length, required, disabled)
+class TextInputBuilder {
+  constructor() {
+    this.custom_id = null;
+    this.label = null;
+    this.style = 1;
+    this.placeholder = null;
+    this.min_length = null;
+    this.max_length = null;
+    this.required = false;
+    this.disabled = false;
+  }
+
+  // Set Custom ID
+  setCustomID(custom_id) {
+    this.custom_id = custom_id;
+    return this;
+  }
+
+  // Set Label
+  setLabel(label) {
+    this.label = label;
+    return this;
+  }
+
+  // Set Style (1 = Short, 2 = Long) (Default: 1)
+  setStyle(style) {
+    this.style = style;
+    return this;
+  }
+
+  // Set Placeholder
+  setPlaceholder(placeholder) {
+    this.placeholder = placeholder;
+    return this;
+  }
+
+  // Set Min Length
+  setMinLength(min_length) {
+    this.min_length = min_length;
+    return this;
+  }
+
+  // Set Max Length
+  setMaxLength(max_length) {
+    this.max_length = max_length;
+    return this;
+  }
+
+  // Set Required
+  setRequired(required) {
+    this.required = required;
+    return this;
+  }
+
+  // Set Disabled
+  setDisabled(disabled) {
+    this.disabled = disabled;
+    return this;
+  }
+
+  // Build TextInput
+  build() {
+    return {
+      type: 3,
+      custom_id: this.custom_id,
+      label: this.label,
+      style: this.style,
+      placeholder: this.placeholder,
+      min_length: this.min_length,
+      max_length: this.max_length,
+      required: this.required,
+      disabled: this.disabled,
+    };
+  }
 }
 
 // Create Action Row Builder (component)
@@ -1963,5 +2109,7 @@ module.exports = {
   EmbedBuilder,
   ButtonBuilder,
   SelectMenuBuilder,
-  ActionRowBuilder
+  ActionRowBuilder,
+  TextInputBuilder,
+  ModalBuilder
 };
