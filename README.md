@@ -143,6 +143,8 @@ onEditedMessage
 onDeletedMessage
 refreshApplicationCommands
 refreshGlobalApplicationCommands
+Collection
+Cooldown
 ```
 
 Embeds and attachments are supported.
