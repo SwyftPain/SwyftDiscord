@@ -201,7 +201,7 @@ client.onMessage(async (message) => {
   if (message.content === "!ping") {
     const embed = new EmbedBuilder();
     embed.setTitle("Pong!");
-    // use createDisplayAvatarURL to get the avatar of the user
+    // use displayAvatarURL(user) to get the avatar of the user
     const photo = fs.readFileSync("./test.jpeg");
     client.sendMessage(message.channel.id, "Pong", {
       embeds: [embed],
