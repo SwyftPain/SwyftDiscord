@@ -8,8 +8,7 @@ Currently added methods are:
 ```
 login
 onReady
-onMessage
-onInteraction
+on
 setActivity
 getMessages
 sendMessage
@@ -88,7 +87,6 @@ modifyGuildWidget
 guildPrune
 modifyGuildMFALevel
 modifyGuildRolePositions
-modifyCurrentUserNick
 modifyCurrentMemberNick
 modifyGuildMember
 searchGuildMembers
@@ -139,10 +137,8 @@ SelectMenuBuilder,
 ActionRowBuilder
 TextInputBuilder,
 ModalBuilder
-onEditedMessage
-onDeletedMessage
-refreshApplicationCommands
-refreshGlobalApplicationCommands
+deleteApplicationCommands
+deleteGlobalApplicationCommands
 Collection
 Cooldown
 SlashCommandBuilder
@@ -158,6 +154,7 @@ messageActivityTypes
 messageFlags
 messageNotificationLevels
 buttonStyles
+replyToInteraction
 ```
 
 Embeds and attachments are supported.
@@ -197,7 +194,7 @@ client.onReady(() => {
   client.setActivity("online", "watching", "SwyftDiscord");
 });
 
-client.onMessage(async (message) => {
+client.on("messageCreate", async (message) => {
   if (message.content === "!ping") {
     const embed = new EmbedBuilder();
     embed.setTitle("Pong!");
@@ -208,9 +205,11 @@ client.onMessage(async (message) => {
       attachments: [{ name: "test.jpeg", file: photo }],
     });
   }
+});
 
-  if (message.content.startsWith("!t")) {
-    client.sendDM(message.author.id, "Hello there!");
+client.on("interactionCreate", async (interaction) => {
+  if (interaction.command.name === "ping") {
+    client.replyToInteraction(interaction, "Pong!");
   }
 });
 

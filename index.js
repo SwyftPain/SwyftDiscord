@@ -32,7 +32,14 @@ class SwyftDiscord {
     this.onReadyCallback = null;
     this.collectionActive = false;
     this.collectedMessages = [];
-    this.onMessage = this.onMessage.bind(this);
+    this.on = this.on.bind(this);
+    this.ws = new WebSocket(
+      `wss://gateway.discord.gg/?v=6&encoding=json&intents=${this.intents},${this.partials}`
+    );
+    this.eventCallbacks = {
+      messageCreate: [],
+      interactionCreate: []
+  }
   }
 
   // Login to the bot
@@ -59,13 +66,7 @@ class SwyftDiscord {
     }
   }
 
-  // Check for incoming discord messages
-  async onMessage(callback) {
-    this.ws = new WebSocket(
-      `wss://gateway.discord.gg/?v=6&encoding=json&intents=${this.intents},${this.partials}`
-    );
-
-    // on start
+  async on(eventType, callback) {
     this.ws.onopen = () => {
       const data = {
         op: 2,
@@ -91,11 +92,9 @@ class SwyftDiscord {
         this.onReadyCallback();
       }
     };
-
-    // on message
-    this.ws.onmessage = (event) => {
+    this.ws.addEventListener('message', (event) => {
       const message = JSON.parse(event.data);
-      if (message.op === 0 && message.t === "MESSAGE_CREATE") {
+      if (eventType === "messageCreate" && message.t === "MESSAGE_CREATE") {
         message.d.channel = { id: message.d.channel_id };
         message.d.guild = { id: message.d.guild_id };
         delete message.d.guild_id;
@@ -106,63 +105,44 @@ class SwyftDiscord {
       } else if (message.op === 10) {
         this.startHeartbeat(message.d.heartbeat_interval);
       }
-    };
-
-    // on close
-    this.ws.onclose = () => {
-      clearInterval(this.heartbeatInterval);
-    };
-
-    // on error
-    this.ws.onerror = (error) => {
-      console.log(`WebSocket error: ${error}`);
-    };
-  }
-
-  // Check for incoming discord interactions (slash commands)
-  async onInteraction(callback) {
-    this.ws = new WebSocket(
-      `wss://gateway.discord.gg/?v=6&encoding=json&intents=${this.intents},${this.partials}`
-    );
-
-    // on start
-    this.ws.onopen = () => {
-      const data = {
-        op: 2,
-        d: {
-          token: this.token,
-          properties: {
-            $os: "windows",
-            $browser: "my_library",
-            $device: "my_library",
-          },
-          presence: {
-            status: "online",
-            since: null,
-            game: {
-              name: "my_library",
-            },
-          },
-        },
-      };
-      this.ws.send(JSON.stringify(data));
-
-      if (this.onReadyCallback) {
-        this.onReadyCallback();
-      }
-    };
-
-    // on message
-    this.ws.onmessage = (event) => {
+    });
+    this.ws.addEventListener('message', (event) => {
       const message = JSON.parse(event.data);
-      if (message.op === 0 && message.t === "INTERACTION_CREATE") {
+      if (eventType === "interactionCreate" && message.t === "INTERACTION_CREATE") {
+        message.d.channel = { id: message.d.channel_id };
+        message.d.command = { id: message.d.data.id, name: message.d.data.name, type: message.d.data.type };
+        delete message.d.channel_id;
+        delete message.d.data;
+        this.currentChannelID = message.d.channel_id;
+        this.currentGuildID = message.d.guild_id;
         callback(message.d);
       } else if (message.op === 10) {
         this.startHeartbeat(message.d.heartbeat_interval);
       }
-    };
+    });
+    this.ws.addEventListener('message', (event) => {
+      const message = JSON.parse(event.data);
+      if (eventType === "messageUpdate" && message.t === "MESSAGE_UPDATE") {
+        message.d.channel_id = message.d.channel_id;
+        this.currentChannelID = message.d.channel_id;
+        this.currentGuildID = message.d.guild_id;
+        callback(message.d);
+      } else if (message.op === 10) {
+        this.startHeartbeat(message.d.heartbeat_interval);
+      }
+    });
+    this.ws.addEventListener('message', (event) => {
+      const message = JSON.parse(event.data);
+      if (eventType === "messageDelete" && message.t === "MESSAGE_DELETE") {
+        message.d.channel_id = message.d.channel_id;
+        this.currentChannelID = message.d.channel_id;
+        this.currentGuildID = message.d.guild_id;
+        callback(message.d);
+      } else if (message.op === 10) {
+        this.startHeartbeat(message.d.heartbeat_interval);
+      }
+    });
 
-    // on close
     this.ws.onclose = () => {
       clearInterval(this.heartbeatInterval);
     };
@@ -183,120 +163,6 @@ class SwyftDiscord {
   // Do something when the bot is ready
   async onReady(callback) {
     this.onReadyCallback = callback;
-  }
-
-  // on edited message
-  async onEditedMessage(callback) {
-    this.ws = new WebSocket(
-      `wss://gateway.discord.gg/?v=6&encoding=json&intents=${this.intents},${this.partials}`
-    );
-
-    // on start
-    this.ws.onopen = () => {
-      const data = {
-        op: 2,
-        d: {
-          token: this.token,
-          properties: {
-            $os: "windows",
-            $browser: "my_library",
-            $device: "my_library",
-          },
-          presence: {
-            status: "online",
-            since: null,
-            game: {
-              name: "my_library",
-            },
-          },
-        },
-      };
-      this.ws.send(JSON.stringify(data));
-
-      if (this.onReadyCallback) {
-        this.onReadyCallback();
-      }
-    };
-
-    // on message
-    this.ws.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      if (message.op === 0 && message.t === "MESSAGE_UPDATE") {
-        message.d.channel_id = message.d.channel_id;
-        this.currentChannelID = message.d.channel_id;
-        this.currentGuildID = message.d.guild_id;
-        callback(message.d);
-      } else if (message.op === 10) {
-        this.startHeartbeat(message.d.heartbeat_interval);
-      }
-    };
-
-    // on close
-    this.ws.onclose = () => {
-      clearInterval(this.heartbeatInterval);
-    };
-
-    // on error
-    this.ws.onerror = (error) => {
-      console.log(`WebSocket error: ${error}`);
-    };
-  }
-
-  // on deleted message
-  async onDeletedMessage(callback) {
-    this.ws = new WebSocket(
-      `wss://gateway.discord.gg/?v=6&encoding=json&intents=${this.intents},${this.partials}`
-    );
-
-    // on start
-    this.ws.onopen = () => {
-      const data = {
-        op: 2,
-        d: {
-          token: this.token,
-          properties: {
-            $os: "windows",
-            $browser: "my_library",
-            $device: "my_library",
-          },
-          presence: {
-            status: "online",
-            since: null,
-            game: {
-              name: "my_library",
-            },
-          },
-        },
-      };
-      this.ws.send(JSON.stringify(data));
-
-      if (this.onReadyCallback) {
-        this.onReadyCallback();
-      }
-    };
-
-    // on message
-    this.ws.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      if (message.op === 0 && message.t === "MESSAGE_DELETE") {
-        message.d.channel_id = message.d.channel_id;
-        this.currentChannelID = message.d.channel_id;
-        this.currentGuildID = message.d.guild_id;
-        callback(message.d);
-      } else if (message.op === 10) {
-        this.startHeartbeat(message.d.heartbeat_interval);
-      }
-    };
-
-    // on close
-    this.ws.onclose = () => {
-      clearInterval(this.heartbeatInterval);
-    };
-
-    // on error
-    this.ws.onerror = (error) => {
-      console.log(`WebSocket error: ${error}`);
-    };
   }
 
   // Set bot activity
@@ -3091,7 +2957,7 @@ class SwyftDiscord {
     if (typeof name !== "string") console.log("Name must be a string");
     if (typeof description !== "string")
       console.log("Description must be a string");
-    if (typeof options !== "object")
+    if (options && typeof options !== "object")
       console.log("Options must be an array of objects");
     const data = {
       name: name,
@@ -3103,7 +2969,30 @@ class SwyftDiscord {
       let url = `${this.baseURL}/applications/${applicationID}/commands`;
       let headers = { Authorization: `Bot ${this.token}` };
       const commands = await axios.post(url, data, { headers });
+      this.interactionID = commands.data.id;
+      this.interactionToken = commands.data.token;
+      console.log(commands.data);
       return commands.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // Reply to an interaction with a message (slash commands)
+  async replyToInteraction(interaction, content) {
+    if (!content) console.log("No content provided");
+    if (typeof content !== "string") console.log("Content must be a string");
+    const data = {
+      type: 4,
+      data: {
+          content: content
+      }
+    };
+    try {
+      let url = `${this.baseURL}/interactions/${interaction.id}/${interaction.token}/callback`;
+      let headers = { Authorization: `Bot ${this.token}` };
+      const reply = await axios.post(url, data, { headers });
+      return reply.data;
     } catch (err) {
       console.error(err);
     }
