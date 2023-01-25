@@ -145,6 +145,19 @@ refreshApplicationCommands
 refreshGlobalApplicationCommands
 Collection
 Cooldown
+SlashCommandBuilder
+SlashCommandOptionBuilder
+SlashCommandSubcommandBuilder
+SlashCommandSubcommandGroupBuilder
+permissions
+intents
+partials
+events
+messageTypes
+messageActivityTypes
+messageFlags
+messageNotificationLevels
+buttonStyles
 ```
 
 Embeds and attachments are supported.
