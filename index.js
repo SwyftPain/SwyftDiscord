@@ -4154,8 +4154,10 @@ class Cooldown {
       throw new TypeError("Time must be a number.");
     }
 
+    const storedate = Date.now() + time;
+
     // Set cooldown
-    await this.db.set(command, time);
+    await this.db.set(command, storedate);
     return await this.db.get(command);
   }
 
@@ -4167,7 +4169,7 @@ class Cooldown {
     }
 
     // Get cooldown
-    return await this.db.get(command);
+    return await Math.abs(this.db.get(command));
   }
 
   // Delete cooldown
