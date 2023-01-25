@@ -162,6 +162,61 @@ buttonStyles
 
 Embeds and attachments are supported.
 
+```js
+require("dotenv").config();
+const { SwyftDiscord, EmbedBuilder } = require("swyftdiscord");
+const fs = require("fs");
+
+const intents = {
+  guilds: true,
+  guildMembers: true,
+  guildBans: true,
+  guildPresences: true,
+  guildMessages: true,
+  guildMessageReactions: true,
+  guildMessageTyping: true,
+  directMessages: true,
+  directMessageReactions: true,
+  directMessageTyping: true,
+};
+
+const partials = {
+  members: true,
+  users: true,
+  channels: true,
+  emojis: true,
+  guilds: true,
+  invites: true,
+  roles: true,
+};
+
+const client = new SwyftDiscord(intents, partials);
+
+client.onReady(() => {
+  console.log("Ready!");
+  client.setActivity("online", "watching", "SwyftDiscord");
+});
+
+client.onMessage(async (message) => {
+  if (message.content === "!ping") {
+    const embed = new EmbedBuilder();
+    embed.setTitle("Pong!");
+    // use createDisplayAvatarURL to get the avatar of the user
+    const photo = fs.readFileSync("./test.jpeg");
+    client.sendMessage(message.channel.id, "Pong", {
+      embeds: [embed],
+      attachments: [{ name: "test.jpeg", file: photo }],
+    });
+  }
+
+  if (message.content.startsWith("!t")) {
+    client.sendDM(message.author.id, "Hello there!");
+  }
+});
+
+client.login(process.env.TOKEN);
+```
+
 Plans:
 
 + Split methods into separate files for better readability
