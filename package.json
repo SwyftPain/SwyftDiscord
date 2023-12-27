@@ -19,7 +19,7 @@
   "author": "SwyftPain",
   "license": "ISC",
   "dependencies": {
-    "axios": "^1.2.3",
+    "axios": "^1.6.3",
     "better-sqlite3": "^8.0.1",
     "dotenv": "^16.0.3",
     "form-data": "^4.0.0",
